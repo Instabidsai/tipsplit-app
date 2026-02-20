@@ -227,10 +227,10 @@ function App() {
 
           {/* Footer Links */}
           <div className="text-center space-y-1 pt-2">
-            <p className="text-xs text-surface-200">Free forever. No ads. No tracking.</p>
+            <p className="text-xs text-surface-700">Free forever. No ads. No tracking.</p>
             <div className="flex justify-center gap-4 text-xs">
-              <button onClick={() => navigate('terms')} className="text-surface-200 hover:text-brand-500 underline">Terms</button>
-              <button onClick={() => navigate('privacy')} className="text-surface-200 hover:text-brand-500 underline">Privacy</button>
+              <button onClick={() => navigate('terms')} className="text-surface-700 hover:text-brand-500 underline">Terms</button>
+              <button onClick={() => navigate('privacy')} className="text-surface-700 hover:text-brand-500 underline">Privacy</button>
             </div>
           </div>
         </div>
