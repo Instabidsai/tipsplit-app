@@ -1,13 +1,77 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 const TIP_PRESETS = [15, 18, 20, 25] as const
 
+type Page = 'calculator' | 'terms' | 'privacy'
+
+function TermsPage({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="min-h-screen bg-white px-4 py-8 max-w-2xl mx-auto">
+      <button onClick={onBack} className="text-brand-600 font-semibold mb-6 hover:underline">&larr; Back</button>
+      <h1 className="text-2xl font-bold text-surface-900 mb-4">Terms of Service</h1>
+      <p className="text-surface-700 text-sm mb-3">Last updated: February 2026</p>
+      <div className="prose prose-sm text-surface-700 space-y-3">
+        <p>TipSplit is a free tip calculator tool provided as-is. By using this website, you agree to these terms.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Use of Service</h2>
+        <p>TipSplit performs tip and bill-splitting calculations on your device. All calculations happen locally in your browser. We do not collect, store, or transmit any data you enter.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">No Warranty</h2>
+        <p>This tool is provided &ldquo;as is&rdquo; without warranty of any kind. While we strive for accuracy, you should verify important calculations independently.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Limitation of Liability</h2>
+        <p>TipSplit shall not be liable for any damages arising from the use of this service.</p>
+      </div>
+    </div>
+  )
+}
+
+function PrivacyPage({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="min-h-screen bg-white px-4 py-8 max-w-2xl mx-auto">
+      <button onClick={onBack} className="text-brand-600 font-semibold mb-6 hover:underline">&larr; Back</button>
+      <h1 className="text-2xl font-bold text-surface-900 mb-4">Privacy Policy</h1>
+      <p className="text-surface-700 text-sm mb-3">Last updated: February 2026</p>
+      <div className="prose prose-sm text-surface-700 space-y-3">
+        <p>TipSplit respects your privacy. Here is what we collect: <strong>nothing</strong>.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Data Collection</h2>
+        <p>We do not collect any personal information. No accounts, no cookies, no analytics trackers. All calculations happen entirely in your browser.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Third-Party Services</h2>
+        <p>We load the Inter font from Google Fonts. Google may collect standard web request data (IP address, browser type) as part of serving fonts. No other third-party services are used.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Data Storage</h2>
+        <p>No data is stored on any server. Your bill amounts, tip selections, and split calculations exist only in your browser&apos;s memory and are cleared when you close the page.</p>
+        <h2 className="text-lg font-semibold text-surface-900 mt-4">Contact</h2>
+        <p>For questions about this privacy policy, visit our GitHub repository.</p>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [page, setPage] = useState<Page>('calculator')
   const [billAmount, setBillAmount] = useState('')
   const [tipPercent, setTipPercent] = useState<number>(18)
   const [customTip, setCustomTip] = useState('')
   const [isCustom, setIsCustom] = useState(false)
   const [numPeople, setNumPeople] = useState(1)
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash
+      if (hash === '#terms') setPage('terms')
+      else if (hash === '#privacy') setPage('privacy')
+      else setPage('calculator')
+    }
+    handleHash()
+    window.addEventListener('hashchange', handleHash)
+    return () => window.removeEventListener('hashchange', handleHash)
+  }, [])
+
+  const navigate = (p: Page) => {
+    window.location.hash = p === 'calculator' ? '' : p
+    setPage(p)
+    window.scrollTo(0, 0)
+  }
+
+  if (page === 'terms') return <TermsPage onBack={() => navigate('calculator')} />
+  if (page === 'privacy') return <PrivacyPage onBack={() => navigate('calculator')} />
 
   const activeTip = isCustom ? (parseFloat(customTip) || 0) : tipPercent
   const bill = parseFloat(billAmount) || 0
@@ -161,10 +225,14 @@ function App() {
             </div>
           </div>
 
-          {/* Footer */}
-          <p className="text-center text-xs text-surface-200 pt-2">
-            Free forever. No ads. No tracking.
-          </p>
+          {/* Footer Links */}
+          <div className="text-center space-y-1 pt-2">
+            <p className="text-xs text-surface-200">Free forever. No ads. No tracking.</p>
+            <div className="flex justify-center gap-4 text-xs">
+              <button onClick={() => navigate('terms')} className="text-surface-200 hover:text-brand-500 underline">Terms</button>
+              <button onClick={() => navigate('privacy')} className="text-surface-200 hover:text-brand-500 underline">Privacy</button>
+            </div>
+          </div>
         </div>
       </main>
     </div>
